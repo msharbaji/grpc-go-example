@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "github.com/msharbaji/grpc-go-example/pb";
+
+message User {
+
+    string id = 1;
+    string username = 2;
+    string email = 3;
+    google.protobuf.Timestamp created_at = 4;
+    google.protobuf.Timestamp updated_at = 5;
+}
+
+message Users {
+    repeated User users = 1;
+}
+
+message CreateUserRequest {
+    string username = 1;
+    string email = 2;
+}
+
+message GetUserRequest {
+    string id = 1;
+}
+
+message DeleteUserRequest {
+    string id = 1;
+}
+
+service UserService {
+    rpc CreateUser(CreateUserRequest) returns (User);
+    rpc GetUser(GetUserRequest) returns (User);
+    rpc UpdateUser(User) returns (User);
+    rpc DeleteUser(DeleteUserRequest) returns (User);
+    rpc ListUsers(google.protobuf.Empty) returns (Users);
+}
+
+
+
+
