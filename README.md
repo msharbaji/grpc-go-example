@@ -1,14 +1,28 @@
 # grpc-go-example
-This a grpc show the example for grpc-go
+This a grpc show the example for grpc-go, include server and client.
 
-## How to run
+## Environment variables
+| Name          | Description          | Default         | Required |
+|---------------|----------------------|-----------------|----------|
+| GRPC_ENDPOINT | grpc server endpoint | localhost:50051 | false    |
+| KEY_ID        | hmac key id          | 1               | false    |
+| SECRET_KEY    | hmac secret key      | 123456          | false    |
+
+
+## Set environment variables
 ```shell
-# run server
-go run server/main.go
+export GRPC_ENDPOINT=localhost:50051
+export KEY_ID=my-key-id
+export SECRET_KEY=my-secret-key
 ```
 
-## How to generate code
+## Generate proto code
 ```shell
-# generate code
-protoc --go_out=plugins=grpc:. ./proto/helloworld.proto
+chmod +x ./scripts/gen-proto.sh
+./scripts/gen-proto.sh
+```
+
+## Run server
+```shell
+go run ./cmd/server/main.go
 ```
