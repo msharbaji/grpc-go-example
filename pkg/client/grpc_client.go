@@ -22,7 +22,7 @@ type client struct {
 	pb.UserServiceClient
 }
 
-func (c client) GetVersion(version string) (*pb.VersionResponse, error) {
+func (c *client) GetVersion(version string) (*pb.VersionResponse, error) {
 
 	versionReq := &pb.VersionRequest{
 		Version: version,
@@ -36,7 +36,7 @@ func (c client) GetVersion(version string) (*pb.VersionResponse, error) {
 	return res, nil
 }
 
-func (c client) GetUser(id string) (*pb.User, error) {
+func (c *client) GetUser(id string) (*pb.User, error) {
 
 	userReq := &pb.GetUserRequest{
 		Id: id,
