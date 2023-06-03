@@ -62,12 +62,12 @@ func (s *userServiceServer) CreateUser(_ context.Context, req *pb.CreateUserRequ
 func (s *userServiceServer) GetUser(_ context.Context, req *pb.GetUserRequest) (*pb.User, error) {
 	// Check if the request contains an ID, email, or username
 	if id := req.GetId(); id != "" {
-		// Retrieve user by ID
-		user, ok := users[id]
-		if !ok {
-			return nil, status.Errorf(codes.NotFound, "user not found with ID: %s", id)
+		for _, user := range users {
+			if user.GetId() == id {
+				return user, nil
+			}
 		}
-		return user, nil
+		return nil, status.Errorf(codes.NotFound, "user not found with ID: %s", id)
 	}
 
 	if email := req.GetEmail(); email != "" {

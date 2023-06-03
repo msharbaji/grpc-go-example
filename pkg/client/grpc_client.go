@@ -8,6 +8,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"strings"
 )
 
@@ -17,11 +18,25 @@ type Client interface {
 
 	// GetUser GetUser user by id, email or username.
 	GetUser(identifier string, identifierType string) (*pb.User, error)
+
+	// ListUsers ListUsers list all users.
+	ListUsers() (*pb.Users, error)
 }
 
 type client struct {
 	pb.VersionServiceClient
 	pb.UserServiceClient
+}
+
+func (c *client) ListUsers() (*pb.Users, error) {
+	empty := &emptypb.Empty{}
+
+	res, err := c.UserServiceClient.ListUsers(context.Background(), empty)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to list users")
+		return nil, err
+	}
+	return res, nil
 }
 
 func (c *client) GetVersion(version string) (*pb.VersionResponse, error) {
