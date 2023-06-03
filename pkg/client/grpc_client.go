@@ -2,19 +2,21 @@ package client
 
 import (
 	"context"
+	"fmt"
 	"github.com/msharbaji/grpc-go-example/api/pb"
 	"github.com/msharbaji/grpc-go-example/pkg/middleware"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"strings"
 )
 
 type Client interface {
 	// GetVersion GetVersion application version.
 	GetVersion(version string) (*pb.VersionResponse, error)
 
-	// GetUser GetVersion user by id.
-	GetUser(id string) (*pb.User, error)
+	// GetUser GetUser user by id, email or username.
+	GetUser(identifier string, identifierType string) (*pb.User, error)
 }
 
 type client struct {
@@ -36,10 +38,18 @@ func (c *client) GetVersion(version string) (*pb.VersionResponse, error) {
 	return res, nil
 }
 
-func (c *client) GetUser(id string) (*pb.User, error) {
+func (c *client) GetUser(identifier string, identifierType string) (*pb.User, error) {
+	userReq := &pb.GetUserRequest{}
 
-	userReq := &pb.GetUserRequest{
-		Id: id,
+	switch strings.ToLower(identifierType) {
+	case "id":
+		userReq.Id = &identifier
+	case "email":
+		userReq.Email = &identifier
+	case "username":
+		userReq.Username = &identifier
+	default:
+		return nil, fmt.Errorf("invalid identifier type: %s", identifierType)
 	}
 
 	res, err := c.UserServiceClient.GetUser(context.Background(), userReq)
