@@ -21,6 +21,9 @@ type Client interface {
 
 	// ListUsers ListUsers list all users.
 	ListUsers() (*pb.Users, error)
+
+	// CreateUser create a new user.
+	CreateUser(username string, email string) (*pb.User, error)
 }
 
 type client struct {
@@ -68,6 +71,19 @@ func (c *client) GetUser(identifier string, identifierType string) (*pb.User, er
 	}
 
 	res, err := c.UserServiceClient.GetUser(context.Background(), userReq)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+func (c *client) CreateUser(username string, email string) (*pb.User, error) {
+	userReq := &pb.CreateUserRequest{
+		Username: username,
+		Email:    email,
+	}
+
+	res, err := c.UserServiceClient.CreateUser(context.Background(), userReq)
 	if err != nil {
 		return nil, err
 	}

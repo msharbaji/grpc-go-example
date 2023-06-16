@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"math/rand"
 )
 
 var users = map[string]*pb.User{
@@ -49,7 +50,7 @@ func (s *userServiceServer) CreateUser(_ context.Context, req *pb.CreateUserRequ
 	}
 
 	user := &pb.User{
-		Id:       "1",
+		Id:       string(rune(rand.Int())),
 		Username: req.GetUsername(),
 		Email:    req.GetEmail(),
 	}
