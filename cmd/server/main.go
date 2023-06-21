@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/msharbaji/grpc-go-example/internal/app"
 	"github.com/msharbaji/grpc-go-example/internal/utils"
+	"github.com/msharbaji/grpc-go-example/pkg/server"
 	"github.com/rs/zerolog/log"
 )
 
@@ -22,7 +22,7 @@ func main() {
 	secrets := map[string]string{
 		cfg.KeyID: cfg.SecretKey,
 	}
-	grpcServer, err := app.NewGrpcServer(cfg.Endpoint, secrets)
+	grpcServer, err := server.NewGrpcServer(cfg.Endpoint, secrets)
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to create grpc server")
 	}

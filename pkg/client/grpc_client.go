@@ -89,11 +89,11 @@ func (c *client) CreateUser(ctx context.Context, username string, email string) 
 		Email:    email,
 	}
 
-	res, err := c.UserServiceClient.CreateUser(ctx, userReq)
+	createdUser, err := c.UserServiceClient.CreateUser(ctx, userReq)
 	if err != nil {
 		return nil, err
 	}
-	return res, nil
+	return createdUser, nil
 }
 
 func (c *client) UpdateUser(ctx context.Context, user *pb.User) (*pb.User, error) {
