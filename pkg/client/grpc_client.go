@@ -14,22 +14,22 @@ import (
 
 type Client interface {
 	// GetVersion GetVersion application version.
-	GetVersion(ctx context.Context, version string) (*pb.VersionResponse, error)
+	GetVersion(ctx context.Context, version string) (*pb.GetVersionResponse, error)
 
 	// GetUser GetUser user by id, email or username.
-	GetUser(ctx context.Context, identifier string, identifierType string) (*pb.User, error)
+	GetUser(ctx context.Context, identifier string, identifierType string) (*pb.GetUserResponse, error)
 
 	// ListUsers ListUsers list all users.
-	ListUsers(tx context.Context) (*pb.Users, error)
+	ListUsers(tx context.Context) (*pb.ListUsersResponse, error)
 
 	// CreateUser create a new user.
-	CreateUser(ctx context.Context, username string, email string) (*pb.User, error)
+	CreateUser(ctx context.Context, username string, email string) (*pb.CreateUserResponse, error)
 
 	// UpdateUser update a user.
-	UpdateUser(ctx context.Context, user *pb.User) (*pb.User, error)
+	UpdateUser(ctx context.Context, user *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error)
 
 	// DeleteUser delete a user.
-	DeleteUser(ctx context.Context, identifier string, identifierType string) (*pb.User, error)
+	DeleteUser(ctx context.Context, identifier string, identifierType string) (*pb.DeleteUserResponse, error)
 }
 
 type client struct {
@@ -37,7 +37,7 @@ type client struct {
 	pb.UserServiceClient
 }
 
-func (c *client) ListUsers(ctx context.Context) (*pb.Users, error) {
+func (c *client) ListUsers(ctx context.Context) (*pb.ListUsersResponse, error) {
 	empty := &emptypb.Empty{}
 
 	res, err := c.UserServiceClient.ListUsers(ctx, empty)
@@ -48,9 +48,9 @@ func (c *client) ListUsers(ctx context.Context) (*pb.Users, error) {
 	return res, nil
 }
 
-func (c *client) GetVersion(ctx context.Context, version string) (*pb.VersionResponse, error) {
+func (c *client) GetVersion(ctx context.Context, version string) (*pb.GetVersionResponse, error) {
 
-	versionReq := &pb.VersionRequest{
+	versionReq := &pb.GetVersionRequest{
 		Version: version,
 	}
 
@@ -62,7 +62,7 @@ func (c *client) GetVersion(ctx context.Context, version string) (*pb.VersionRes
 	return res, nil
 }
 
-func (c *client) GetUser(ctx context.Context, identifier string, identifierType string) (*pb.User, error) {
+func (c *client) GetUser(ctx context.Context, identifier string, identifierType string) (*pb.GetUserResponse, error) {
 	userReq := &pb.GetUserRequest{}
 
 	switch strings.ToLower(identifierType) {
@@ -83,7 +83,7 @@ func (c *client) GetUser(ctx context.Context, identifier string, identifierType 
 	return res, nil
 }
 
-func (c *client) CreateUser(ctx context.Context, username string, email string) (*pb.User, error) {
+func (c *client) CreateUser(ctx context.Context, username string, email string) (*pb.CreateUserResponse, error) {
 	userReq := &pb.CreateUserRequest{
 		Username: username,
 		Email:    email,
@@ -96,7 +96,7 @@ func (c *client) CreateUser(ctx context.Context, username string, email string) 
 	return createdUser, nil
 }
 
-func (c *client) UpdateUser(ctx context.Context, user *pb.User) (*pb.User, error) {
+func (c *client) UpdateUser(ctx context.Context, user *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
 
 	res, err := c.UserServiceClient.UpdateUser(ctx, user)
 	if err != nil {
@@ -105,7 +105,7 @@ func (c *client) UpdateUser(ctx context.Context, user *pb.User) (*pb.User, error
 	return res, nil
 }
 
-func (c *client) DeleteUser(ctx context.Context, identifier string, identifierType string) (*pb.User, error) {
+func (c *client) DeleteUser(ctx context.Context, identifier string, identifierType string) (*pb.DeleteUserResponse, error) {
 
 	userReq := &pb.DeleteUserRequest{}
 

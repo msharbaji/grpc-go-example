@@ -13,8 +13,8 @@ func NewVersionServiceServer() pb.VersionServiceServer {
 	return &versionServiceServer{}
 }
 
-func (s *versionServiceServer) GetVersion(_ context.Context, req *pb.VersionRequest) (*pb.VersionResponse, error) {
-	response := &pb.VersionResponse{
+func (s *versionServiceServer) GetVersion(_ context.Context, req *pb.GetVersionRequest) (*pb.GetVersionResponse, error) {
+	response := &pb.GetVersionResponse{
 		Version: req.GetVersion(),
 	}
 	return response, nil

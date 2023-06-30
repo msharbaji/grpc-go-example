@@ -4,11 +4,11 @@ default: genProto
 genProto:
 	@protoc \
      -I=./api/proto \
-     --go_out=./pkg \
-     --go_opt module=${module} \
-     --go-grpc_out=./pkg \
-     --go-grpc_opt module=${module} \
-     ./api/proto/*.proto
+     --go_out=. \
+     --go_opt=module=github.com/msharbaji/grpc-go-example \
+     --go-grpc_out=. \
+     --go-grpc_opt=module=github.com/msharbaji/grpc-go-example \
+     ./api/proto/v1/*.proto
 
 .PHONY: run-server
 run-server:

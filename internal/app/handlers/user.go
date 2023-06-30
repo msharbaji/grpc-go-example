@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/google/uuid"
 	"github.com/msharbaji/grpc-go-example/pkg/pb"
@@ -10,6 +9,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 var users = map[string]*pb.User{
@@ -42,7 +42,7 @@ func NewUserServiceServer() pb.UserServiceServer {
 }
 
 // CreateUser creates a new user
-func (s *userServiceServer) CreateUser(_ context.Context, req *pb.CreateUserRequest) (*pb.User, error) {
+func (s *userServiceServer) CreateUser(_ context.Context, req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
 	_, ok := users[req.GetUsername()]
 	if ok {
 		log.Error().Msg("user already exists")
@@ -56,16 +56,18 @@ func (s *userServiceServer) CreateUser(_ context.Context, req *pb.CreateUserRequ
 	}
 
 	users[req.GetUsername()] = user
-	return user, nil
+	return &pb.CreateUserResponse{
+		User: user,
+	}, nil
 }
 
 // GetUser gets a user
-func (s *userServiceServer) GetUser(_ context.Context, req *pb.GetUserRequest) (*pb.User, error) {
+func (s *userServiceServer) GetUser(_ context.Context, req *pb.GetUserRequest) (*pb.GetUserResponse, error) {
 	// Check if the request contains an ID, email, or username
 	if id := req.GetId(); id != "" {
 		for _, user := range users {
 			if user.GetId() == id {
-				return user, nil
+				return &pb.GetUserResponse{User: user}, nil
 			}
 		}
 		return nil, status.Errorf(codes.NotFound, "user not found with ID: %s", id)
@@ -75,7 +77,7 @@ func (s *userServiceServer) GetUser(_ context.Context, req *pb.GetUserRequest) (
 		// Retrieve user by email
 		for _, user := range users {
 			if user.GetEmail() == email {
-				return user, nil
+				return &pb.GetUserResponse{User: user}, nil
 			}
 		}
 		return nil, status.Errorf(codes.NotFound, "user not found with email: %s", email)
@@ -85,7 +87,7 @@ func (s *userServiceServer) GetUser(_ context.Context, req *pb.GetUserRequest) (
 		// Retrieve user by username
 		for _, user := range users {
 			if user.GetUsername() == username {
-				return user, nil
+				return &pb.GetUserResponse{User: user}, nil
 			}
 		}
 		return nil, status.Errorf(codes.NotFound, "user not found with username: %s", username)
@@ -95,32 +97,45 @@ func (s *userServiceServer) GetUser(_ context.Context, req *pb.GetUserRequest) (
 }
 
 // UpdateUser updates a user
-func (s *userServiceServer) UpdateUser(_ context.Context, req *pb.User) (*pb.User, error) {
-	user, ok := users[req.GetUsername()]
+func (s *userServiceServer) UpdateUser(_ context.Context, req *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error) {
+	username := req.GetUsername()
+	user, ok := users[username]
 	if !ok {
-		return nil, status.Errorf(codes.NotFound, fmt.Sprintf("user not found: %s", req.GetUsername()))
+		return nil, status.Errorf(codes.NotFound, "user not found: %s", username)
 	}
 
-	users[req.GetUsername()] = req
-	return user, nil
+	if email := req.GetEmail(); email != "" {
+		user.Email = email
+	}
+
+	user.UpdatedAt = timestamppb.Now()
+
+	users[username] = user
+
+	return &pb.UpdateUserResponse{
+		User: user,
+	}, nil
 }
 
 // DeleteUser deletes a user
-func (s *userServiceServer) DeleteUser(_ context.Context, req *pb.DeleteUserRequest) (*pb.User, error) {
+func (s *userServiceServer) DeleteUser(_ context.Context, req *pb.DeleteUserRequest) (*pb.DeleteUserResponse, error) {
+	user := users[req.GetId()]
 	delete(users, req.GetId())
 	log.Info().Msgf("user deleted %s", req.GetId())
-	return &pb.User{}, nil
+	return &pb.DeleteUserResponse{
+		User: user,
+	}, nil
 
 }
 
 // ListUsers lists all users
-func (s *userServiceServer) ListUsers(context.Context, *emptypb.Empty) (*pb.Users, error) {
+func (s *userServiceServer) ListUsers(_ context.Context, _ *emptypb.Empty) (*pb.ListUsersResponse, error) {
 	var usersList []*pb.User
 	for _, user := range users {
 		usersList = append(usersList, user)
 	}
 
-	return &pb.Users{
+	return &pb.ListUsersResponse{
 		Users: usersList,
 	}, nil
 }

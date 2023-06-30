@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package api.proto.v1;
+
+option go_package = "github.com/msharbaji/grpc-go-example/pkg/pb";
+
+
+message GetVersionRequest {
+    string version = 1;
+}
+message GetVersionResponse {
+    string version = 1;
+}
+
+
+service VersionService {
+  rpc GetVersion(GetVersionRequest) returns (GetVersionResponse);
+}

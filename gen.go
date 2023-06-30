@@ -1,3 +1,3 @@
 package main
 
-//go:generate make genProto
+//go:generate buf generate
