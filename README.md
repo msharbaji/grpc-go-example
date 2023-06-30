@@ -1,4 +1,4 @@
-# grpc-go-example
+# grpc-go-example [![Go Reference](https://pkg.go.dev/badge/github.com/msharbaji/grpc-go-example.svg)](https://pkg.go.dev/github.com/msharbaji/grpc-go-example) [![Continuous Integration](https://github.com/msharbaji/grpc-go-example/actions/workflows/on-push.yaml/badge.svg)](https://github.com/msharbaji/grpc-go-example/actions/workflows/on-push.yaml) [![Go Report Card](https://goreportcard.com/badge/github.com/msharbaji/grpc-go-example)](https://goreportcard.com/report/github.com/msharbaji/grpc-go-example)  
 This is an example repository showcasing the usage of gRPC with Go, including server and client implementations.
 
 ## Environment variables
