@@ -33,13 +33,11 @@ jobs:
         shell: bash
         run: |
           go vet ./...
+      - name: go test
+        run: go test ./...
       - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
         if: success() || failure()
-        shell: bash
-        run: |
-          golangci-lint run --timeout 5m
         with:
           skip-pkg-cache: true
           args: --timeout=1m
-      - name: go test
-        run: go test ./...
