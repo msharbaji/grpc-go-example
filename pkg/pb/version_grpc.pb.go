@@ -19,7 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	VersionService_GetVersion_FullMethodName = "/pb.VersionService/GetVersion"
+	VersionService_GetVersion_FullMethodName = "/msharbaji.protobuf.example.VersionService/GetVersion"
 )
 
 // VersionServiceClient is the client API for VersionService service.
@@ -96,7 +96,7 @@ func _VersionService_GetVersion_Handler(srv interface{}, ctx context.Context, de
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var VersionService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.VersionService",
+	ServiceName: "msharbaji.protobuf.example.VersionService",
 	HandlerType: (*VersionServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

@@ -2,12 +2,13 @@ package server
 
 import (
 	"errors"
-	"github.com/msharbaji/grpc-go-example/api/pb"
 	"github.com/msharbaji/grpc-go-example/internal/app/handlers"
 	"github.com/msharbaji/grpc-go-example/pkg/middleware"
+	"github.com/msharbaji/grpc-go-example/pkg/pb"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/reflection"
 	"net"
 	"os"
 	"os/signal"
@@ -32,24 +33,23 @@ func NewGrpcServer(address string, secrets map[string]string) (*Grpc, error) {
 
 	pb.RegisterVersionServiceServer(s.server, handlers.NewVersionServiceServer())
 	pb.RegisterUserServiceServer(s.server, handlers.NewUserServiceServer())
+	reflection.Register(s.server)
 	return s, nil
 }
 
-// Start starts the grpc server
-func (s *Grpc) Start() error {
+// start starts the grpc server
+func (s *Grpc) start() {
 	listen, err := net.Listen("tcp", s.address)
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to listen")
 	}
-	go func() {
-		if err := s.server.Serve(listen); !errors.Is(err, grpc.ErrServerStopped) {
-			log.Fatal().Err(err).Msg("failed to start gRPC server")
-		}
-	}()
+
+	if err := s.server.Serve(listen); !errors.Is(err, grpc.ErrServerStopped) {
+		log.Fatal().Err(err).Msg("failed to start gRPC server")
+	}
 
 	log.Info().Msgf("gRPC server started on %s", s.address)
 
-	return nil
 }
 
 // Stop stops the grpc server
@@ -60,10 +60,7 @@ func (s *Grpc) Stop() error {
 
 // Run starts the gRPC server and handles graceful shutdown
 func (s *Grpc) Run() error {
-	if err := s.Start(); err != nil {
-		return err
-	}
-
+	go s.start()
 	// Create a channel to receive termination signals
 	signalCh := make(chan os.Signal, 1)
 	signal.Notify(signalCh, syscall.SIGINT, syscall.SIGTERM)

@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"context"
-	"github.com/msharbaji/grpc-go-example/api/pb"
+	"github.com/msharbaji/grpc-go-example/pkg/pb"
 )
 
 type versionServiceServer struct {

@@ -18,11 +18,10 @@ export SECRET_KEY=my-secret-key
 
 ## Generate proto code
 ```shell
-chmod +x ./scripts/gen-proto.sh
-./scripts/gen-proto.sh
+go generate ./...
 ```
 
 ## Run server
 ```shell
-go run ./cmd/server/main.go
+make run-server
 ```
