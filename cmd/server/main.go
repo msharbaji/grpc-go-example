@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/msharbaji/grpc-go-example/internal/utils"
-	"github.com/msharbaji/grpc-go-example/pkg/server"
+	"github.com/alecthomas/kingpin/v2"
+	"github.com/msharbaji/grpc-go-example/internal/server"
 	"github.com/rs/zerolog/log"
 )
 
@@ -11,19 +11,17 @@ const (
 	version = "local"
 )
 
+var (
+	grpcPort    = kingpin.Flag("grpc-port", "gRPC port").Envar("GRPC_PORT").Default("50051").String()
+	hmacSecrets = kingpin.Flag("hmac-secrets", "Key-value pair for secret").Envar("HMAC_SECRETS").Default("my-secret-key=my-secret-value").StringMap()
+)
+
 func main() {
+	// parse command line flags
+	kingpin.Parse()
 
-	// Load config
-	cfg, err := utils.LoadConfig()
-	if err != nil {
-		log.Fatal().Err(err).Msg("failed to load config")
-	}
-
-	// Create a new grpc server
-	secrets := map[string]string{
-		cfg.KeyID: cfg.SecretKey,
-	}
-	grpcServer, err := server.NewGrpcServer(cfg.Endpoint, secrets)
+	// create grpc server
+	grpcServer, err := server.NewGrpcServer(*grpcPort, *hmacSecrets)
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to create grpc server")
 	}

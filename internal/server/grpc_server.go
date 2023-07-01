@@ -2,7 +2,8 @@ package server
 
 import (
 	"errors"
-	"github.com/msharbaji/grpc-go-example/internal/app/handlers"
+	"fmt"
+	handlers2 "github.com/msharbaji/grpc-go-example/internal/handlers"
 	"github.com/msharbaji/grpc-go-example/pkg/middleware"
 	"github.com/msharbaji/grpc-go-example/pkg/pb"
 	"github.com/rs/zerolog/log"
@@ -21,30 +22,31 @@ type Grpc struct {
 }
 
 // NewGrpcServer creates a new grpc server
-func NewGrpcServer(address string, secrets map[string]string) (*Grpc, error) {
+func NewGrpcServer(port string, secrets map[string]string) (*Grpc, error) {
 	opts := []grpc.ServerOption{
 		grpc.UnaryInterceptor(middleware.NewServerAuthInterceptor(secrets)),
 		grpc.Creds(insecure.NewCredentials()),
 	}
 	s := &Grpc{
-		address: address,
+		address: fmt.Sprintf(":%s", port),
 		server:  grpc.NewServer(opts...),
 	}
 
-	pb.RegisterVersionServiceServer(s.server, handlers.NewVersionServiceServer())
-	pb.RegisterUserServiceServer(s.server, handlers.NewUserServiceServer())
+	pb.RegisterVersionServiceServer(s.server, handlers2.NewVersionServiceServer())
+	pb.RegisterUserServiceServer(s.server, handlers2.NewUserServiceServer())
+
 	reflection.Register(s.server)
 	return s, nil
 }
 
 // start starts the grpc server
 func (s *Grpc) start() {
-	listen, err := net.Listen("tcp", s.address)
+	listener, err := net.Listen("tcp", s.address)
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to listen")
 	}
 
-	if err := s.server.Serve(listen); !errors.Is(err, grpc.ErrServerStopped) {
+	if err := s.server.Serve(listener); !errors.Is(err, grpc.ErrServerStopped) {
 		log.Fatal().Err(err).Msg("failed to start gRPC server")
 	}
 
