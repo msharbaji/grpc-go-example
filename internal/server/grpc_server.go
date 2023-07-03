@@ -39,8 +39,8 @@ func NewGrpcServer(port string, secrets map[string]string) (*Grpc, error) {
 	return s, nil
 }
 
-// start starts the grpc server
-func (s *Grpc) start() {
+// Start starts the grpc server
+func (s *Grpc) Start() {
 	listener, err := net.Listen("tcp", s.address)
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to listen")
@@ -60,9 +60,7 @@ func (s *Grpc) Stop() error {
 	return nil
 }
 
-// Run starts the gRPC server and handles graceful shutdown
-func (s *Grpc) Run() error {
-	go s.start()
+func (s *Grpc) HandleShutdown() {
 	// Create a channel to receive termination signals
 	signalCh := make(chan os.Signal, 1)
 	signal.Notify(signalCh, syscall.SIGINT, syscall.SIGTERM)
@@ -73,8 +71,6 @@ func (s *Grpc) Run() error {
 	// Initiate graceful shutdown
 	log.Info().Msg("Received termination signal. Shutting down gRPC server...")
 	if err := s.Stop(); err != nil {
-		return err
+		log.Fatal().Err(err).Msg("failed to shutdown gRPC server")
 	}
-
-	return nil
 }

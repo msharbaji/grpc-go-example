@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/alecthomas/kingpin/v2"
-	"github.com/msharbaji/grpc-go-example/internal/server"
+	"github.com/msharbaji/grpc-go-example/pkg/app"
 	"github.com/rs/zerolog/log"
 )
 
@@ -20,15 +20,15 @@ func main() {
 	// parse command line flags
 	kingpin.Parse()
 
-	// create grpc server
-	grpcServer, err := server.NewGrpcServer(*grpcPort, *hmacSecrets)
+	log.Info().Str("AppVersion", version).Msg("starting api")
+
+	_app, err := app.NewApp(*grpcPort, *hmacSecrets)
 	if err != nil {
-		log.Fatal().Err(err).Msg("failed to create grpc server")
+		log.Fatal().Err(err).Msg("failed to create app")
 	}
 
-	//defer wg.Done()
-	if err := grpcServer.Run(); err != nil {
-		log.Fatal().Err(err).Msg("failed to run grpc server")
+	if err := _app.Run(); err != nil {
+		log.Fatal().Err(err).Msg("failed to run app")
 	}
 
 }
