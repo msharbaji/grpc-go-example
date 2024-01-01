@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/alecthomas/kingpin/v2 v2.3.2
 	github.com/golang/protobuf v1.5.3
-	github.com/google/uuid v1.3.1
+	github.com/google/uuid v1.5.0
 	github.com/rs/zerolog v1.29.1
 	google.golang.org/grpc v1.57.0
 	google.golang.org/protobuf v1.31.0
