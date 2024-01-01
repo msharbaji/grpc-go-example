@@ -3,7 +3,7 @@ module github.com/msharbaji/grpc-go-example
 go 1.20
 
 require (
-	github.com/alecthomas/kingpin/v2 v2.3.2
+	github.com/alecthomas/kingpin/v2 v2.4.0
 	github.com/golang/protobuf v1.5.3
 	github.com/google/uuid v1.3.1
 	github.com/rs/zerolog v1.29.1
