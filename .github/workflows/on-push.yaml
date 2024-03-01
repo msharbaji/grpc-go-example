@@ -36,7 +36,7 @@ jobs:
       - name: go test
         run: go test ./...
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v4
         if: success() || failure()
         with:
           skip-pkg-cache: true
